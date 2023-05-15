@@ -1,0 +1,71 @@
+<form id="searchform" class="search2" method="get" action="source.html">
+  <div>
+    <label for="test">
+      <img src="/static/searchh.svg" alt="Search Icon" width="60" height="60">
+    </label>
+    <input class="search2" id="test" type="text" name="search" size="30" maxlength="255">
+    <input type="submit" value="Search">
+  </div>
+</form>
+
+<div id="tags">
+  <span class="tag">Fruits</span>
+  <span class="tag">Coding</span>
+  <span class="tag">BMW</span>
+  <span class="tag">Python</span>
+</div>
+
+<style>
+  #test {
+    width: 500px;
+    height: 50px;
+    font-size: 20px;
+    padding: 10px;
+    border-radius: 25px;
+    border: 2px solid #ccc;
+  }
+  
+  input[type="submit"] {
+    font-size: 24px;
+    padding: 12px 24px;
+    border-radius: 25px;
+    border: 2px solid #ccc;
+    background-color: black; /* set the background color to black */
+    color: white; /* set the font color to white */
+    cursor: pointer;
+  }
+
+  #tags {
+    margin-top: 10px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 5px 10px;
+    margin-right: 10px;
+    background-color: black;
+    border-radius: 25px;
+    font-size: 16px;
+    color: white;
+    cursor: pointer;
+  }
+</style>
+
+<script>
+  function search() {
+    var query = document.getElementById("test").value;
+    window.location.href = "https://www.google.com/search?q=" + query;
+  }
+
+  document.getElementById("test").addEventListener("keydown", function(event) {
+    if (event.keyCode === 13) {
+      event.preventDefault();
+      search();
+    }
+  });
+</script>
+
+
+
+
+
