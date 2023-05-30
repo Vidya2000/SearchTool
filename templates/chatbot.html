@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    /* Existing CSS styles */
+
+    /* Chatbot container styles */
+    #chatbotContainer {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 300px;
+      height: 400px;
+      background-color: #f1f1f1;
+      border-radius: 10px;
+      padding: 10px;
+      display: none; /* Hide the chatbot container by default */
+      /* Add any additional styling as per your design preferences */
+    }
+
+    /* Chatbot message styles */
+    .chatbotMessage {
+      margin-bottom: 10px;
+    }
+
+    .userMessage {
+      color: blue;
+    }
+
+    .botMessage {
+      color: green;
+    }
+
+    /* Chatbot icon styles */
+    #chatbotIcon {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 50px;
+      height: 50px;
+      background-color: black;
+      border-radius: 50%;
+      cursor: pointer;
+      /* Add any additional styling as per your design preferences */
+    }
+
+    #chatbotIcon::before {
+      content: "Chat"; /* Add the text or icon for the chatbot icon */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100%;
+      color: white;
+      /* Add any additional styling for the chatbot icon content */
+    }
+  </style>
+</head>
+<body>
+  <form id="searchform" class="search2" method="get" action="#">
+    <!-- Existing form and search elements -->
+
+  </form>
+
+  <div id="tags">
+    <!-- Existing tags -->
+  </div>
+
+  <div id="searchResults"></div>
+
+  <div id="chatbotContainer">
+    <div id="chatbotMessages"></div>
+    <input id="chatbotInput" type="text" placeholder="Type your message..." />
+    <button id="chatbotSendButton">Send</button>
+  </div>
+
+  <div id="chatbotIcon"></div>
+
+  <script>
+    // Existing JavaScript code
+
+    var chatbotContainer = document.getElementById("chatbotContainer");
+    var chatbotIcon = document.getElementById("chatbotIcon");
+    var chatbotMessages = document.getElementById("chatbotMessages");
+    var chatbotInput = document.getElementById("chatbotInput");
+    var chatbotSendButton = document.getElementById("chatbotSendButton");
+
+    function toggleChatbot() {
+      chatbotContainer.style.display = chatbotContainer.style.display === "none" ? "block" : "none";
+    }
+
+    function addChatbotMessage(message, isUserMessage) {
+      var messageClass = isUserMessage ? "userMessage" : "botMessage";
+      var messageElement = document.createElement("div");
+      messageElement.classList.add("chatbotMessage", messageClass);
+      messageElement.textContent = message;
+      chatbotMessages.appendChild(messageElement);
+    }
+
+    function processUserMessage() {
+      var userMessage = chatbotInput.value;
+      addChatbotMessage(userMessage, true);
+
+      // Handle user message and generate bot response
+      var botResponse = generateBotResponse(userMessage);
+
+      setTimeout(function() {
+        addChatbotMessage(botResponse, false);
+      }, 500);
+
+      chatbotInput.value = "";
+    }
+
+    function generateBotResponse(userMessage) {
+      // Replace with your own chatbot logic or API call
+      return "This is a sample bot response for: " + userMessage;
+    }
+
+    chatbotSendButton.addEventListener("click", function(event) {
+      event.preventDefault();
+      processUserMessage();
+    });
+
+    chatbotInput.addEventListener("keyup", function(event) {
+      event.preventDefault();
+      if (event.keyCode === 13) {
+        processUserMessage();
+      }
+    });
+
+    chatbotIcon.addEventListener("click", toggleChatbot);
+  </script>
+</body>
+</html>

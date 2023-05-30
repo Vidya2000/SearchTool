@@ -1,71 +1,253 @@
-<form id="searchform" class="search2" method="get" action="source.html">
-  <div>
-    <label for="test">
-      <img src="/static/searchh.svg" alt="Search Icon" width="60" height="60">
-    </label>
-    <input class="search2" id="test" type="text" name="search" size="30" maxlength="255">
-    <input type="submit" value="Search">
-  </div>
-</form>
-
-<div id="tags">
-  <span class="tag">Fruits</span>
-  <span class="tag">Coding</span>
-  <span class="tag">BMW</span>
-  <span class="tag">Python</span>
-</div>
-
-<style>
-  #test {
-    width: 500px;
-    height: 50px;
-    font-size: 20px;
-    padding: 10px;
-    border-radius: 25px;
-    border: 2px solid #ccc;
-  }
-  
-  input[type="submit"] {
-    font-size: 24px;
-    padding: 12px 24px;
-    border-radius: 25px;
-    border: 2px solid #ccc;
-    background-color: black; /* set the background color to black */
-    color: white; /* set the font color to white */
-    cursor: pointer;
-  }
-
-  #tags {
-    margin-top: 10px;
-  }
-
-  .tag {
-    display: inline-block;
-    padding: 5px 10px;
-    margin-right: 10px;
-    background-color: black;
-    border-radius: 25px;
-    font-size: 16px;
-    color: white;
-    cursor: pointer;
-  }
-</style>
-
-<script>
-  function search() {
-    var query = document.getElementById("test").value;
-    window.location.href = "https://www.google.com/search?q=" + query;
-  }
-
-  document.getElementById("test").addEventListener("keydown", function(event) {
-    if (event.keyCode === 13) {
-      event.preventDefault();
-      search();
+<!DOCTYPE html>
+<html>
+<head>
+  <style>
+    #test {
+      position: relative;
+      width: 500px;
+      height: 50px;
+      font-size: 20px;
+      padding: 10px 60px 10px 10px; /* Adjust padding to make space for icons */
+      border-radius: 25px;
+      border: 2px solid #ccc;
     }
-  });
-</script>
 
+    #test input[type="search"] {
+      width: 100%;
+      height: 100%;
+      padding: 0;
+      border: none;
+      outline: none;
+      background: transparent;
+    }
 
+    #test .mic-icon,
+    #test .scanner-icon {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      cursor: pointer;
+    }
 
+    #test .mic-icon {
+      right: 38px;
+      background-image: url('/static/mic.png');
+      width: 24px;
+      height: 24px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
 
+    #test .scanner-icon {
+      right: 10px;
+      background-image: url('/static/scannerr.png');
+      width: 24px;
+      height: 24px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+    }
 
+    #test::-webkit-search-cancel-button,
+    #test::-webkit-search-decoration,
+    #test::-webkit-search-results-button,
+    #test::-webkit-search-results-decoration {
+      display: none; 
+    }
+
+    .search-bar-container {
+      position: relative; 
+      display: inline-block; 
+    }
+
+    input[type="submit"] {
+      font-size: 24px;
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: 2px solid #ccc;
+      background-color: black;
+      color: white;
+      cursor: pointer;
+    }
+
+    #saveButton {
+      font-size: 24px;
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: 2px solid #ccc;
+      background-color: blue;
+      color: white;
+      cursor: pointer;
+    }
+
+    #loginButton {
+      font-size: 24px;
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: 2px solid #ccc;
+      background-color: green;
+      color: white;
+      cursor: pointer;
+    }
+
+    #tags {
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-block;
+      padding: 5px 10px;
+      margin-right: 10px;
+      background-color: black;
+      border-radius: 25px;
+      font-size: 16px;
+      color: white;
+      cursor: pointer;
+    }
+
+    .search-button-container {
+      display: inline-block;
+      margin-left: 5px;
+      vertical-align: top; /* Adjust vertical alignment */
+    }
+  </style>
+</head>
+<body>
+  <form id="searchform" class="search2" method="get" action="#">
+    <div class="search-bar-container">
+      <div id="test">
+        <input class="search2" type="search" name="search" size="30" maxlength="255">
+        <div class="mic-icon" onclick="handleMicClick()"></div>
+        <div class="scanner-icon" onclick="handleScannerClick()"></div>
+      </div>
+    </div>
+    <div class="search-button-container">
+      <input type="submit" value="Search">
+    </div>
+    <div class="search-button-container">
+      <button type="button" id="saveButton">Save</button>
+      <button type="button" id="loginButton">Login</button>
+    </div>
+  </form>
+
+  <div id="tags">
+    <span class="tag">Fruits</span>
+    <span class="tag">Coding</span>
+    <span class="tag">BMW</span>
+    <span class="tag">Python</span>
+  </div>
+
+  <div id="searchResults"></div>
+
+  <script>
+    /*To fetch from Text file */
+    function searchFromFile() {
+      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+
+      fetch("/static/Search.txt")
+        .then(function(response) {
+          return response.text();
+        })
+        .then(function(data) {
+          var results = processData(data, query);
+          displayResults(results);
+        })
+        .catch(function(error) {
+          console.log("Error fetching data:", error);
+        });
+    }
+
+    function processData(data, query) {
+      var lines = data.split("\n");
+      var results = [];
+
+      for (var i = 0; i < lines.length; i++) {
+        var line = lines[i].trim();
+        var parts = line.split(" ? ");
+
+        var prompt = parts[0];
+        var response = parts[1];
+
+        if (prompt.toLowerCase() === query.toLowerCase()) {
+          results.push(response);
+        }
+      }
+
+      return results;
+    }
+    
+  /*To dispaly results */
+    function displayResults(results) {
+      var resultsContainer = document.getElementById("searchResults");
+      resultsContainer.innerHTML = "";
+
+      if (results.length > 0) {
+        for (var i = 0; i < results.length; i++) {
+          resultsContainer.innerHTML += "<p>" + results[i] + "</p>";
+        }
+      } else {
+        resultsContainer.innerHTML = "No results found.";
+      }
+    }
+
+    document.getElementById("searchform").addEventListener("submit", function(event) {
+      event.preventDefault();
+      searchFromFile();
+    });
+
+    function save() {
+      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+      alert("Query saved: " + query);
+    }
+
+    document.getElementById("saveButton").addEventListener("click", function() {
+      save();
+    });
+
+    function authenticateUser(username, password) {
+      // Simulated user data
+      const users = [
+        { username: "user1", password: "password1" },
+        { username: "user2", password: "password2" },
+      ];
+
+      // Check if the provided username and password match any user in the simulated user data
+      const user = users.find((user) => user.username === username && user.password === password);
+
+      return user ? true : false;
+    }
+
+    function login() {
+      var username = prompt("Enter your username:");
+      var password = prompt("Enter your password:");
+
+      var isAuthenticated = authenticateUser(username, password);
+
+      if (isAuthenticated) {
+        alert("Login successful!");
+        // Perform further actions after successful login
+      } else {
+        alert("Invalid username or password. Please try again.");
+      }
+    }
+
+    document.getElementById("loginButton").addEventListener("click", function() {
+      login();
+    });
+
+    function handleMicClick() {
+  // Prompt the user to speak or perform an action
+  var userAction = prompt("Please speak or perform an action:");
+
+  // Process the user's action
+  if (userAction) {
+    alert("You said: " + userAction);
+  }
+}
+
+function handleScannerClick() {
+  alert("Scanning...");
+}
+
+  </script>
+</body>
+</html>
