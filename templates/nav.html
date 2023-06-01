@@ -2,12 +2,18 @@
 <html>
 <head>
   <style>
+    /* CSS styles */
+
+    body {
+      margin-top: 20px; /* Add space at the top */
+    }
+
     #test {
       position: relative;
       width: 500px;
       height: 50px;
       font-size: 20px;
-      padding: 10px 60px 10px 10px; /* Adjust padding to make space for icons */
+      padding: 10px 60px 10px 10px;
       border-radius: 25px;
       border: 2px solid #ccc;
     }
@@ -58,8 +64,7 @@
       position: relative; 
       display: inline-block; 
     }
-
-    input[type="submit"] {
+     input[type="submit"] {
       font-size: 24px;
       padding: 12px 24px;
       border-radius: 25px;
@@ -69,7 +74,13 @@
       cursor: pointer;
     }
 
-    #saveButton {
+    .search-button-container {
+      display: inline-block;
+      margin-left: 5px;
+      vertical-align: top; /* Adjust vertical alignment */
+    }
+
+     #saveButton {
       font-size: 24px;
       padding: 12px 24px;
       border-radius: 25px;
@@ -103,30 +114,27 @@
       color: white;
       cursor: pointer;
     }
-
-    .search-button-container {
-      display: inline-block;
-      margin-left: 5px;
-      vertical-align: top; /* Adjust vertical alignment */
-    }
   </style>
 </head>
 <body>
-  <form id="searchform" class="search2" method="get" action="#">
+ <form id="searchform" class="search2" method="post" action="/save_search">
     <div class="search-bar-container">
       <div id="test">
         <input class="search2" type="search" name="search" size="30" maxlength="255">
-        <div class="mic-icon" onclick="handleMicClick()"></div>
-        <div class="scanner-icon" onclick="handleScannerClick()"></div>
+        <div class="mic-icon"></div>
+        <div class="scanner-icon"></div>
       </div>
     </div>
     <div class="search-button-container">
       <input type="submit" value="Search">
     </div>
     <div class="search-button-container">
-      <button type="button" id="saveButton">Save</button>
+      <button type="button" id="saveButton" onclick="save()">Save</button>
       <button type="button" id="loginButton">Login</button>
     </div>
+
+    <input type="hidden" id="queryInput" name="query">
+    <input type="hidden" id="resultsInput" name="results">
   </form>
 
   <div id="tags">
@@ -139,10 +147,8 @@
   <div id="searchResults"></div>
 
   <script>
-    /*To fetch from Text file */
-    function searchFromFile() {
-      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
-
+    /* To fetch from Text file */
+    function searchFromFile(query) {
       fetch("/static/Search.txt")
         .then(function(response) {
           return response.text();
@@ -174,8 +180,8 @@
 
       return results;
     }
-    
-  /*To dispaly results */
+
+    /* To display results */
     function displayResults(results) {
       var resultsContainer = document.getElementById("searchResults");
       resultsContainer.innerHTML = "";
@@ -191,26 +197,104 @@
 
     document.getElementById("searchform").addEventListener("submit", function(event) {
       event.preventDefault();
-      searchFromFile();
+      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+      searchFromFile(query);
     });
 
-    function save() {
-      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
-      alert("Query saved: " + query);
+    function handleMicClick() {
+      // Prompt the user to speak
+      var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      recognition.start();
+
+      recognition.onresult = function(event) {
+        var query = event.results[0][0].transcript;
+        document.getElementById("test").getElementsByTagName("input")[0].value = query;
+        searchFromFile(query);
+      };
     }
+
+    function handleScannerClick() {
+      alert("Scanning...");
+    }
+
+    document.querySelector(".mic-icon").addEventListener("click", function() {
+      handleMicClick();
+    });
+
+    document.querySelector(".scanner-icon").addEventListener("click", function() {
+      handleScannerClick();
+    });
 
     document.getElementById("saveButton").addEventListener("click", function() {
       save();
     });
 
+    document.getElementById("loginButton").addEventListener("click", function() {
+      login();
+    });
+
+   function save() {
+    var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+    var results = document.getElementById("searchResults").innerHTML;
+
+    var data = "Query: " + query + "\nResults: " + results + "\n\n";
+
+    if (window.requestFileSystem || window.webkitRequestFileSystem) {
+    // Request access to the file system
+      window.requestFileSystem = window.requestFileSystem ||     window.webkitRequestFileSystem;
+      window.requestFileSystem(
+      window.PERSISTENT,
+      5 * 1024 * 1024, // 5MB storage size
+      function(fs) {
+        // Create a file
+        fs.root.getFile(
+          "search_history.txt",
+          { create: true },
+          function(fileEntry) {
+            // Create a FileWriter object to write the data to the file
+            fileEntry.createWriter(
+              function(fileWriter) {
+                fileWriter.onwriteend = function() {
+                  alert("Data saved successfully!");
+                };
+
+                fileWriter.onerror = function(e) {
+                  console.log("Write failed: " + e.toString());
+                };
+
+                // Create a Blob object with the data and write it to the file
+                var blob = new Blob([data], { type: "text/plain" });
+                fileWriter.write(blob);
+              },
+              function(error) {
+                console.log("Error creating writer:", error);
+              }
+            );
+          },
+          function(error) {
+            console.log("Error creating file:", error);
+          }
+        );
+      },
+      function(error) {
+        console.log("Error accessing file system:", error);
+      }
+    );
+  } else {
+    console.log("File System API not supported in this browser");
+  }
+}
+
     function authenticateUser(username, password) {
-      // Simulated user data
       const users = [
         { username: "user1", password: "password1" },
         { username: "user2", password: "password2" },
       ];
 
-      // Check if the provided username and password match any user in the simulated user data
       const user = users.find((user) => user.username === username && user.password === password);
 
       return user ? true : false;
@@ -224,30 +308,10 @@
 
       if (isAuthenticated) {
         alert("Login successful!");
-        // Perform further actions after successful login
       } else {
         alert("Invalid username or password. Please try again.");
       }
     }
-
-    document.getElementById("loginButton").addEventListener("click", function() {
-      login();
-    });
-
-    function handleMicClick() {
-  // Prompt the user to speak or perform an action
-  var userAction = prompt("Please speak or perform an action:");
-
-  // Process the user's action
-  if (userAction) {
-    alert("You said: " + userAction);
-  }
-}
-
-function handleScannerClick() {
-  alert("Scanning...");
-}
-
   </script>
 </body>
 </html>
