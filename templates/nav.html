@@ -5,7 +5,7 @@
     /* CSS styles */
 
     body {
-      margin-top: 20px; /* Add space at the top */
+      margin-top: 20px; 
     }
 
     #test {
@@ -129,7 +129,7 @@
       <input type="submit" value="Search">
     </div>
     <div class="search-button-container">
-      <button type="button" id="saveButton" onclick="save()">Save</button>
+      <button id="saveButton">Save</button>
       <button type="button" id="loginButton">Login</button>
     </div>
 
@@ -138,10 +138,7 @@
   </form>
 
   <div id="tags">
-    <span class="tag">Fruits</span>
-    <span class="tag">Coding</span>
-    <span class="tag">BMW</span>
-    <span class="tag">Python</span>
+    <!-- Tags will be dynamically populated here -->
   </div>
 
   <div id="searchResults"></div>
@@ -237,80 +234,43 @@
       login();
     });
 
-   function save() {
-    var query = document.getElementById("test").getElementsByTagName("input")[0].value;
-    var results = document.getElementById("searchResults").innerHTML;
+    // Define an array of tags
+    var tags = ["Fruits", "Coding", "BMW", "Python"];
 
-    var data = "Query: " + query + "\nResults: " + results + "\n\n";
+    // Function to generate and populate tags
+    function populateTags() {
+      var tagsContainer = document.getElementById("tags");
+      tagsContainer.innerHTML = ""; // Clear existing tags
 
-    if (window.requestFileSystem || window.webkitRequestFileSystem) {
-    // Request access to the file system
-      window.requestFileSystem = window.requestFileSystem ||     window.webkitRequestFileSystem;
-      window.requestFileSystem(
-      window.PERSISTENT,
-      5 * 1024 * 1024, // 5MB storage size
-      function(fs) {
-        // Create a file
-        fs.root.getFile(
-          "search_history.txt",
-          { create: true },
-          function(fileEntry) {
-            // Create a FileWriter object to write the data to the file
-            fileEntry.createWriter(
-              function(fileWriter) {
-                fileWriter.onwriteend = function() {
-                  alert("Data saved successfully!");
-                };
-
-                fileWriter.onerror = function(e) {
-                  console.log("Write failed: " + e.toString());
-                };
-
-                // Create a Blob object with the data and write it to the file
-                var blob = new Blob([data], { type: "text/plain" });
-                fileWriter.write(blob);
-              },
-              function(error) {
-                console.log("Error creating writer:", error);
-              }
-            );
-          },
-          function(error) {
-            console.log("Error creating file:", error);
-          }
-        );
-      },
-      function(error) {
-        console.log("Error accessing file system:", error);
+      // Iterate through the tags array and create tags dynamically
+      for (var i = 0; i < tags.length; i++) {
+        var tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = tags[i];
+        tag.addEventListener("click", function() {
+          var query = this.textContent;
+          document.getElementById("test").getElementsByTagName("input")[0].value = query;
+          searchFromFile(query);
+        });
+        tagsContainer.appendChild(tag);
       }
-    );
-  } else {
-    console.log("File System API not supported in this browser");
-  }
-}
+    }
 
-    function authenticateUser(username, password) {
-      const users = [
-        { username: "user1", password: "password1" },
-        { username: "user2", password: "password2" },
-      ];
+    // Call the populateTags function to display the initial tags
+    populateTags();
 
-      const user = users.find((user) => user.username === username && user.password === password);
+    function save() {
+      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+      var results = document.getElementById("searchResults").innerHTML;
 
-      return user ? true : false;
+      document.getElementById("queryInput").value = query;
+      document.getElementById("resultsInput").value = results;
+
+      document.getElementById("searchform").submit();
     }
 
     function login() {
-      var username = prompt("Enter your username:");
-      var password = prompt("Enter your password:");
-
-      var isAuthenticated = authenticateUser(username, password);
-
-      if (isAuthenticated) {
-        alert("Login successful!");
-      } else {
-        alert("Invalid username or password. Please try again.");
-      }
+      alert("User login functionality is not implemented yet.");
     }
   </script>
 </body>

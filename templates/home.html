@@ -22,14 +22,6 @@
     }
   </style>
   <script>
-    window.onload = function() {
-      var welcomePage = document.getElementById("welcomePage");
-      var websiteContent = document.getElementById("websiteContent");
-
-      welcomePage.style.display = "block";
-      websiteContent.style.display = "none";
-    }
-
     function enterWebsite() {
       var welcomePage = document.getElementById("welcomePage");
       var websiteContent = document.getElementById("websiteContent");
@@ -37,6 +29,18 @@
       welcomePage.style.display = "none";
       websiteContent.style.display = "block";
     }
+
+    window.addEventListener('DOMContentLoaded', (event) => {
+      // Check if the URL contains a success parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      const successParam = urlParams.get('success');
+      
+      if (successParam === 'true') {
+        // Display the success message
+        var successMessage = document.getElementById("successMessage");
+        successMessage.style.display = "block";
+      }
+    });
   </script>
 </head>
 <body>
@@ -48,6 +52,7 @@
 
   <div id="websiteContent">
     {% include 'nav.html' %}
+    {% include 'notification.html' %}
     <div class="container">
       <h1 class="text-center">SearchTool</h1>
       <img id="Search" class="img-fluid" src="https://searchtool.vidyagms9634.repl.co/static/Search.jpg" height="320">

@@ -1,7 +1,7 @@
 What is your favorite coding language ? Python
 What is your favorite fruit ? Mango
 What is your favorite animal ? Dog
-fruits
-python
-BMW
+Fruits ? Mango
+Python ? Coding
+BMW ? Car
 what is your favorite colour ? Black

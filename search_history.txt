@@ -1,0 +1,73 @@
+
+Query: what is your favorite colour
+Results: <p>Black</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: what is your favorite colour
+Results: <p>Black</p>
+
+Query: what is your favorite colour
+Results: <p>Black</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite animal
+Results: <p>Dog</p>
+
+Query: What is your favorite animal
+Results: <p>Dog</p>
+
+Query: What is your favorite animal
+Results: <p>Dog</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: What is your favorite coding language
+Results: <p>Python</p>
+
+Query: what is your favorite colour
+Results: <p>Black</p>
+

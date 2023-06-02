@@ -1,6 +1,5 @@
-import os
+from flask import Flask, render_template, request, redirect, url_for
 import logging
-from flask import Flask, render_template, request
 
 app = Flask(__name__)
 
@@ -10,15 +9,16 @@ logging.basicConfig(filename="app.log", level=logging.DEBUG)
 
 @app.route("/")
 def hello_world():
-  return render_template("home.html")
+  return render_template("home.html", saved=False)
 
 
-@app.route('/search', methods=['POST'])
-def search():
-  keyword = request.form['keyword']
+@app.route('/save_search', methods=['POST'])
+def save_search():
+  query = request.form['query']
+  results = request.form['results']
   with open('search_history.txt', 'a') as file:
-    file.write(keyword + '\n')
-  return render_template('result.html', keyword=keyword)
+    file.write("Query: " + query + "\nResults: " + results + "\n\n")
+  return redirect(url_for('hello_world', success=True))
 
 
 if __name__ == "__main__":
