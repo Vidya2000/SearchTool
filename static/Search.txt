@@ -5,4 +5,4 @@ Fruits ? Mango
 Python ? Coding
 BMW ? Car
 what is your favorite colour ? Black
-where is your location ? Bangalore
+where is your location ? No results found.
