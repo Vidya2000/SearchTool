@@ -12,24 +12,11 @@
       object-fit: cover;
     }
 
-    #welcomePage {
-      text-align: center;
-      margin-top: 200px;
-    }
-
     #websiteContent {
-      display: none;
+      display: block;
     }
   </style>
   <script>
-    function enterWebsite() {
-      var welcomePage = document.getElementById("welcomePage");
-      var websiteContent = document.getElementById("websiteContent");
-
-      welcomePage.style.display = "none";
-      websiteContent.style.display = "block";
-    }
-
     window.addEventListener('DOMContentLoaded', (event) => {
       // Check if the URL contains a success parameter
       const urlParams = new URLSearchParams(window.location.search);
@@ -44,12 +31,6 @@
   </script>
 </head>
 <body>
-  <div id="welcomePage">
-    <h1>Welcome to SearchTool</h1>
-    <p>Click the button below to enter the website.</p>
-    <button onclick="enterWebsite()" style="font-size: 24px; padding: 12px 24px; background-color: black; color: white;">Enter</button>
-  </div>
-
   <div id="websiteContent">
     {% include 'nav.html' %}
     {% include 'notification.html' %}

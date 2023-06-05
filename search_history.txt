@@ -71,3 +71,21 @@ Results: <p>Python</p>
 Query: what is your favorite colour
 Results: <p>Black</p>
 
+Query: BMW
+Results: <p>Car</p>
+
+Query: 
+Results: No results found.
+
+Query: what is your favorite colour
+Results: 
+
+Query: where is your workplace
+Results: No results found.
+
+Query: what is your favorite colour
+Results: <p>Black</p>
+
+Query: colour
+Results: <p>Black</p>
+

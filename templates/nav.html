@@ -158,26 +158,28 @@
           console.log("Error fetching data:", error);
         });
     }
-
+  
     function processData(data, query) {
       var lines = data.split("\n");
       var results = [];
-
+  
       for (var i = 0; i < lines.length; i++) {
         var line = lines[i].trim();
         var parts = line.split(" ? ");
-
+  
         var prompt = parts[0];
         var response = parts[1];
-
-        if (prompt.toLowerCase() === query.toLowerCase()) {
+  
+        var words = prompt.toLowerCase().split(" "); // Convert prompt to lowercase and split into words
+  
+        // Check if the full prompt or any individual word matches the query
+        if (prompt.toLowerCase().includes(query.toLowerCase()) || words.some(word => word.includes(query.toLowerCase()))) {
           results.push(response);
         }
       }
-
+  
       return results;
     }
-
     /* To display results */
     function displayResults(results) {
       var resultsContainer = document.getElementById("searchResults");
