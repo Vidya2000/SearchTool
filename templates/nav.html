@@ -99,7 +99,7 @@
       color: white;
       cursor: pointer;
     }
-
+    
     #tags {
       margin-top: 10px;
     }
@@ -114,9 +114,25 @@
       color: white;
       cursor: pointer;
     }
+
+    
+  #welcomeMessage {
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: black; /* Set the font color to red */
+    border: 2px solid black; /* Add a 2px solid black border */
+    background-color: lightgoldenrodyellow;
+    border-radius: 25px;
+    padding: 10px; /* Add some padding for spacing */
+  }
+
   </style>
 </head>
 <body>
+    <div id="welcomeMessage">
+    <h1>Welcome to SearchTool!</h1>
+  </div>
 <form id="searchform" class="search2" method="post" action="/save_search">
   <div class="search-bar-container">
     <div id="test">
