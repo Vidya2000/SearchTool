@@ -139,7 +139,9 @@
   <input type="hidden" name="results" id="resultsInput">
 </form>
   
-<div id="searchResults"></div>
+  <div id="tags"></div>
+  <div id="searchResults"></div>
+  
 
   <script>
     /* To fetch from Text file */
@@ -258,8 +260,7 @@ document.getElementById("loginButton").addEventListener("click", function() {
   login();
 });
 
-
-     // Define an array of tags
+  // Define an array of tags
     var tags = ["Fruits", "Coding", "BMW", "Python"];
 
     // Function to generate and populate tags
@@ -275,15 +276,16 @@ document.getElementById("loginButton").addEventListener("click", function() {
         tag.addEventListener("click", function() {
           var query = this.textContent;
           document.getElementById("test").getElementsByTagName("input")[0].value = query;
-          searchFromFile(query);
         });
         tagsContainer.appendChild(tag);
       }
     }
 
-    // Call the populateTags function to display the initial tags
-    populateTags();
-
+    // Wait for the HTML to finish loading before calling populateTags()
+    document.addEventListener('DOMContentLoaded', function() {
+      populateTags();
+    });
+    
     function save() {
       var query = document.getElementById("test").getElementsByTagName("input")[0].value;
       var results = document.getElementById("searchResults").innerHTML;
