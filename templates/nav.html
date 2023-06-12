@@ -117,35 +117,33 @@
   </style>
 </head>
 <body>
- <form id="searchform" class="search2" method="post" action="/save_search">
-    <div class="search-bar-container">
-      <div id="test">
-        <input class="search2" type="search" name="search" size="30" maxlength="255">
-        <div class="mic-icon"></div>
-        <div class="scanner-icon"></div>
-      </div>
+<form id="searchform" class="search2" method="post" action="/save_search">
+  <div class="search-bar-container">
+    <div id="test">
+      <input class="search2" type="search" name="search" size="30" maxlength="255">
+      <div class="mic-icon"></div>
+      <div class="scanner-icon"></div>
     </div>
-    <div class="search-button-container">
-      <input type="submit" value="Search">
-    </div>
-    <div class="search-button-container">
-      <button id="saveButton">Save</button>
-      <button type="button" id="loginButton">Login</button>
-    </div>
-
-    <input type="hidden" id="queryInput" name="query">
-    <input type="hidden" id="resultsInput" name="results">
-  </form>
-
-  <div id="tags">
-    <!-- Tags will be dynamically populated here -->
   </div>
-
-  <div id="searchResults"></div>
+  <div class="search-button-container">
+    <input type="submit" value="Search">
+  </div>
+  <div class="search-button-container">
+    <input id="saveButton" type="button" value="Save">
+  </div>
+  <div class="search-button-container">
+    <input id="loginButton" type="button" value="Login">
+  </div>
+  <input type="hidden" id="resultsInput" name="results" value="">
+  <input type="hidden" name="query" id="queryInput">
+  <input type="hidden" name="results" id="resultsInput">
+</form>
+  
+<div id="searchResults"></div>
 
   <script>
     /* To fetch from Text file */
-    function searchFromFile(query) {
+    /*function searchFromFile(query) {
       fetch("/static/Search.txt")
         .then(function(response) {
           return response.text();
@@ -179,64 +177,89 @@
       }
   
       return results;
-    }
+    }*/
+  
     /* To display results */
-    function displayResults(results) {
-      var resultsContainer = document.getElementById("searchResults");
-      resultsContainer.innerHTML = "";
+   function handleMicClick() {
+  // Prompt the user to speak
+  var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+  recognition.lang = "en-US";
+  recognition.interimResults = false;
+  recognition.maxAlternatives = 1;
 
-      if (results.length > 0) {
-        for (var i = 0; i < results.length; i++) {
-          resultsContainer.innerHTML += "<p>" + results[i] + "</p>";
-        }
-      } else {
-        resultsContainer.innerHTML = "No results found.";
-      }
-    }
+  recognition.start();
 
-    document.getElementById("searchform").addEventListener("submit", function(event) {
-      event.preventDefault();
-      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
-      searchFromFile(query);
+  recognition.onresult = function(event) {
+    var query = event.results[0][0].transcript;
+    document.getElementById("test").getElementsByTagName("input")[0].value = query;
+    document.getElementById("searchform").submit(); // Submit the search form
+  };
+}
+
+function handleScannerClick() {
+  var input = document.createElement("input");
+  input.type = "file";
+  input.accept = "image/*";
+  input.style.display = "none";
+
+  // Trigger click event on the file input element
+  input.click();
+
+  // Handle file selection
+  input.onchange = function (event) {
+    var file = event.target.files[0];
+
+    // Handle the uploaded file here (e.g., send it to the server)
+    console.log("Uploaded file:", file);
+  };
+}
+
+document.getElementById("searchform").addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  var query = document.getElementsByName("search")[0].value;
+
+  // Send the search query to the server
+  fetch("/search", {
+    method: "POST",
+    body: new URLSearchParams({
+      "search": query
+    })
+  })
+    .then(function(response) {
+      return response.text();
+    })
+    .then(function(results) {
+      displayResults(results);
+    })
+    .catch(function(error) {
+      console.error(error);
     });
+});
 
-    function handleMicClick() {
-      // Prompt the user to speak
-      var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-      recognition.lang = "en-US";
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
+function displayResults(results) {
+  var resultsContainer = document.getElementById("searchResults");
+  resultsContainer.innerHTML = results;
+}
 
-      recognition.start();
+document.querySelector(".mic-icon").addEventListener("click", function() {
+  handleMicClick();
+});
 
-      recognition.onresult = function(event) {
-        var query = event.results[0][0].transcript;
-        document.getElementById("test").getElementsByTagName("input")[0].value = query;
-        searchFromFile(query);
-      };
-    }
+document.querySelector(".scanner-icon").addEventListener("click", function() {
+  handleScannerClick();
+});
 
-    function handleScannerClick() {
-      alert("Scanning...");
-    }
+document.getElementById("saveButton").addEventListener("click", function() {
+  save();
+});
 
-    document.querySelector(".mic-icon").addEventListener("click", function() {
-      handleMicClick();
-    });
+document.getElementById("loginButton").addEventListener("click", function() {
+  login();
+});
 
-    document.querySelector(".scanner-icon").addEventListener("click", function() {
-      handleScannerClick();
-    });
 
-    document.getElementById("saveButton").addEventListener("click", function() {
-      save();
-    });
-
-    document.getElementById("loginButton").addEventListener("click", function() {
-      login();
-    });
-
-    // Define an array of tags
+     // Define an array of tags
     var tags = ["Fruits", "Coding", "BMW", "Python"];
 
     // Function to generate and populate tags
@@ -264,16 +287,18 @@
     function save() {
       var query = document.getElementById("test").getElementsByTagName("input")[0].value;
       var results = document.getElementById("searchResults").innerHTML;
-
+    
       document.getElementById("queryInput").value = query;
       document.getElementById("resultsInput").value = results;
-
+    
       document.getElementById("searchform").submit();
     }
 
+    
     function login() {
       alert("User login functionality is not implemented yet.");
     }
+
   </script>
 </body>
 </html>

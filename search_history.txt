@@ -1,9 +1,2 @@
-Query: What is your favorite coding language
-Results: <p>Python</p>
 
-Query: what is your favorite colour
-Results: <p>Black</p>
-
-Query: where is your location
-Results: No results found.
 
