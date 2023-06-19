@@ -74,12 +74,16 @@
       cursor: pointer;
     }
 
+    .search-bar-buttons-container {
+      display: inline-block;
+    }
+    
     .search-button-container {
       display: inline-block;
       margin-left: 5px;
-      vertical-align: top; /* Adjust vertical alignment */
+      vertical-align: top;
     }
-
+    
      #saveButton {
       font-size: 24px;
       padding: 12px 24px;
@@ -114,8 +118,7 @@
       color: white;
       cursor: pointer;
     }
-
-    
+ 
   #welcomeMessage {
     text-align: center;
     font-size: 24px;
@@ -127,19 +130,58 @@
     padding: 10px; /* Add some padding for spacing */
   }
 
+  #profileIconContainer {
+    display: inline-block;
+    vertical-align: top;
+    margin-left: 10px;
+    position: absolute;
+    top: 125px;
+    right: 50px;
+  }
+  
+  .profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: black;
+    color: white;
+    font-size: 24px;
+    line-height: 40px;
+    text-align: center;
+  }
+
+   #removeButton {
+      font-size: 24px;
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: 2px solid #ccc;
+      background-color: grey;
+      color: white;
+      cursor: pointer;
+   }
+  #searchResults {
+    display: inline-block;
+    margin: 0;
+  }
+
+    
   </style>
 </head>
 <body>
-    <div id="welcomeMessage">
+   <div id="headerContainer">
+  <div id="welcomeMessage">
     <h1>Welcome to SearchTool!</h1>
   </div>
 <form id="searchform" class="search2" method="post" action="/save_search">
-  <div class="search-bar-container">
-    <div id="test">
-      <input class="search2" type="search" name="search" size="30" maxlength="255">
+  <div class="search-bar-buttons-container">
+    <div class="search-bar-container">
+      <div id="test">
+        <input class="search2" type="search" name="search" size="30" maxlength="255">
       <div class="mic-icon"></div>
       <div class="scanner-icon"></div>
     </div>
+  </div>
+  <div id="profileIconContainer"></div>
   </div>
   <div class="search-button-container">
     <input type="submit" value="Search">
@@ -149,6 +191,8 @@
   </div>
   <div class="search-button-container">
     <input id="loginButton" type="button" value="Login">
+  </div><div class="search-button-container">
+    <input id="removeButton" type="button" value="Remove">
   </div>
   <input type="hidden" id="resultsInput" name="results" value="">
   <input type="hidden" name="query" id="queryInput">
@@ -257,7 +301,15 @@ document.getElementById("searchform").addEventListener("submit", function(event)
 
 function displayResults(results) {
   var resultsContainer = document.getElementById("searchResults");
-  resultsContainer.innerHTML = results;
+  resultsContainer.innerHTML = "";  // Clear existing results
+
+  var resultsArray = results.split(",");
+  for (var i = 0; i < resultsArray.length; i++) {
+    var result = resultsArray[i].trim();
+    var resultElement = document.createElement("div");
+    resultElement.innerText = result;  // Use innerText instead of textContent
+    resultsContainer.appendChild(resultElement);
+  }
 }
 
 document.querySelector(".mic-icon").addEventListener("click", function() {
@@ -274,6 +326,10 @@ document.getElementById("saveButton").addEventListener("click", function() {
 
 document.getElementById("loginButton").addEventListener("click", function() {
   login();
+});
+
+document.getElementById("removeButton").addEventListener("click", function() {
+  remove();
 });
 
   // Define an array of tags
@@ -313,9 +369,44 @@ document.getElementById("loginButton").addEventListener("click", function() {
     }
 
     
-    function login() {
-      alert("User login functionality is not implemented yet.");
+   function login() {
+    var name = prompt("Enter your name:");
+    var username = prompt("Enter your username:");
+  
+    if (name && username) {
+      // Perform login logic here using the name and username
+      alert("Welcome, " + name + "! You are logged in as " + username);
+  
+      // Generate profile icon based on the user's initial
+      var initial = name.charAt(0).toUpperCase();
+      var profileIconContainer = document.getElementById("profileIconContainer");
+      profileIconContainer.innerHTML = '<div class="profile-icon">' + initial + '</div>';
+    } else {
+      alert("Invalid input. Please enter both name and username.");
     }
+  }
+
+  function remove() {
+    var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+  
+    document.getElementById("queryInput").value = query;
+  
+    fetch("/remove", {
+      method: "POST",
+      body: new URLSearchParams({
+        "query": query
+      })
+    })
+      .then(function(response) {
+        return response.text();
+      })
+      .then(function() {
+        // Handle success if needed
+      })
+      .catch(function(error) {
+        console.error(error);
+      });
+  }
 
   </script>
 </body>

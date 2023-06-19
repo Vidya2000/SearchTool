@@ -1,11 +1,11 @@
-What is your favorite coding language ? Python
-What is your favorite fruit ? Mango
+What is your favorite fruit ? Mango,Strawberry,Apple
 What is your favorite animal ? Dog
 Fruits ? Strawberry
 Python ? Coding
 BMW ? Car
-what is your favorite colour ? Black
 where is your location ? Bangalore.
 where is your home ? No results found.
 new ? <p>No results found.</p>
 ice ? No results found.
+What is your favorite coding language ? Python
+what is your favorite colour ? Black, Purple

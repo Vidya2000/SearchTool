@@ -6,31 +6,44 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello_world():
-    return render_template("home.html", saved=False)
+  return render_template("home.html", saved=False)
 
 
 @app.route('/save_search', methods=['POST'])
 def save_search():
-    query = request.form['search']
-    results = request.form.get('results', '')
+  query = request.form['search']
+  results = request.form.get('results', '')
 
-    # Remove HTML tags from results
-    results = re.sub(r'<[^>]+>', '', results)
+  # Remove HTML tags from results
+  results = re.sub(r'<[^>]+>', '', results)
 
-    # Save to search_history.txt
-    with open('search_history.txt', 'a') as history_file:
-        history_file.write("Query: " + query + "\nResults: " + results.strip() + "\n\n")
+  # Save to search_history.txt
+  with open('search_history.txt', 'a') as history_file:
+    history_file.write("Query: " + query + "\nResults: " + results.strip() +
+                       "\n\n")
 
-    # Save to search.txt if the query is not already present
-    file_path = "static/Search.txt"
-    with open(file_path, 'r') as search_file:
-        existing_queries = search_file.readlines()
+  # Save to search.txt and update the existing query if found
+  file_path = "static/Search.txt"
+  updated = False
 
-    with open(file_path, 'a') as search_file:
-        if not any(query in line for line in existing_queries):
-            search_file.write(query + ' ? ' + results.strip() + '\n')
+  with open(file_path, 'r') as search_file:
+    lines = search_file.readlines()
 
-    return redirect(url_for('hello_world', success=True))
+  with open(file_path, 'w') as search_file:
+    for line in lines:
+      parts = line.split(" ? ")
+      existing_query = parts[0].strip()
+      if query.lower() in existing_query.lower():
+        # Update the existing query by adding the new word
+        updated_query = existing_query + query.strip()
+        line = updated_query + ' ? ' + parts[1].strip() + '\n'
+        updated = True
+      search_file.write(line)
+
+    if not updated:
+      search_file.write(query + ' ? ' + results.strip() + '\n')
+
+  return redirect(url_for('hello_world', success=True))
 
 
 @app.route('/search', methods=['POST'])
@@ -43,12 +56,35 @@ def perform_search():
   with open(file_path, 'r') as search_file:
     for line in search_file:
       parts = line.split(" ? ")
-      if query.lower() in parts[0].lower():
-        results.append(parts[1])
+      if len(parts) >= 2:
+        line_query = parts[0].strip()
+        line_result = parts[1].strip()
+        if query.lower() in line_query.lower():
+          results.append(line_result)
 
   return render_template('search_results.html', results=results)
 
 
+@app.route('/remove', methods=['POST'])
+def remove_search():
+  query = request.form.get('query')
+
+  # Remove the results associated with the query from search.txt
+  file_path = "static/Search.txt"
+  lines = []
+  with open(file_path, 'r') as search_file:
+    for line in search_file:
+      parts = line.split(" ? ")
+      if query.lower() in parts[0].lower():
+        # Remove the results for this query
+        line = parts[0] + " ?\n"  # Retain the query without results
+      lines.append(line)
+
+  with open(file_path, 'w') as search_file:
+    search_file.writelines(lines)
+
+  return redirect(url_for('hello_world', removed=True))
+
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True)
+  app.run(host="0.0.0.0", debug=True)
