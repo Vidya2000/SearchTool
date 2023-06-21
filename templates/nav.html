@@ -5,9 +5,17 @@
     /* CSS styles */
 
     body {
-      margin-top: 20px; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
+    #headerContainer {
+      text-align: center;
+      margin-bottom: 20px; /* Add margin-bottom to create space below the welcome message */
+    }
+    
     #test {
       position: relative;
       width: 500px;
@@ -15,7 +23,7 @@
       font-size: 20px;
       padding: 10px 60px 10px 10px;
       border-radius: 25px;
-      border: 2px solid #ccc;
+      border: 2px solid #333; /* Set the border color to dark */
     }
 
     #test input[type="search"] {
@@ -64,7 +72,8 @@
       position: relative; 
       display: inline-block; 
     }
-     input[type="submit"] {
+
+    input[type="submit"] {
       font-size: 24px;
       padding: 12px 24px;
       border-radius: 25px;
@@ -77,14 +86,14 @@
     .search-bar-buttons-container {
       display: inline-block;
     }
-    
+
     .search-button-container {
       display: inline-block;
       margin-left: 5px;
       vertical-align: top;
     }
-    
-     #saveButton {
+
+    #saveButton {
       font-size: 24px;
       padding: 12px 24px;
       border-radius: 25px;
@@ -94,7 +103,17 @@
       cursor: pointer;
     }
 
-    #loginButton {
+    #removeButton {
+      font-size: 24px;
+      padding: 12px 24px;
+      border-radius: 25px;
+      border: 2px solid #ccc;
+      background-color: grey;
+      color: white;
+      cursor: pointer;
+    }
+
+    #resetButton {
       font-size: 24px;
       padding: 12px 24px;
       border-radius: 25px;
@@ -103,311 +122,176 @@
       color: white;
       cursor: pointer;
     }
-    
-    #tags {
-      margin-top: 10px;
-    }
 
-    .tag {
+    #searchResults {
       display: inline-block;
-      padding: 5px 10px;
-      margin-right: 10px;
-      background-color: black;
-      border-radius: 25px;
-      font-size: 16px;
-      color: white;
-      cursor: pointer;
-    }
- 
-  #welcomeMessage {
-    text-align: center;
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: black; /* Set the font color to red */
-    border: 2px solid black; /* Add a 2px solid black border */
-    background-color: lightgoldenrodyellow;
-    border-radius: 25px;
-    padding: 10px; /* Add some padding for spacing */
-  }
-
-  #profileIconContainer {
-    display: inline-block;
-    vertical-align: top;
-    margin-left: 10px;
-    position: absolute;
-    top: 125px;
-    right: 50px;
-  }
-  
-  .profile-icon {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    background-color: black;
-    color: white;
-    font-size: 24px;
-    line-height: 40px;
-    text-align: center;
-  }
-
-   #removeButton {
+      margin: 0;
       font-size: 24px;
-      padding: 12px 24px;
-      border-radius: 25px;
-      border: 2px solid #ccc;
-      background-color: grey;
-      color: white;
-      cursor: pointer;
-   }
-  #searchResults {
-    display: inline-block;
-    margin: 0;
-  }
+    }
 
-    
+    #test.move-up {
+      transform: translateY(-100%);
+    }
   </style>
 </head>
 <body>
-   <div id="headerContainer">
-  <div id="welcomeMessage">
-    <h1>Welcome to SearchTool!</h1>
-  </div>
-<form id="searchform" class="search2" method="post" action="/save_search">
-  <div class="search-bar-buttons-container">
-    <div class="search-bar-container">
-      <div id="test">
-        <input class="search2" type="search" name="search" size="30" maxlength="255">
-      <div class="mic-icon"></div>
-      <div class="scanner-icon"></div>
-    </div>
-  </div>
-  <div id="profileIconContainer"></div>
-  </div>
-  <div class="search-button-container">
-    <input type="submit" value="Search">
-  </div>
-  <div class="search-button-container">
-    <input id="saveButton" type="button" value="Save">
-  </div>
-  <div class="search-button-container">
-    <input id="loginButton" type="button" value="Login">
-  </div><div class="search-button-container">
-    <input id="removeButton" type="button" value="Remove">
-  </div>
-  <input type="hidden" id="resultsInput" name="results" value="">
-  <input type="hidden" name="query" id="queryInput">
-  <input type="hidden" name="results" id="resultsInput">
-</form>
-  
-  <div id="tags"></div>
-  <div id="searchResults"></div>
-  
+    <form id="searchform" class="search2" method="post" action="/save_search">
+      <div class="search-bar-buttons-container">
+        <div class="search-bar-container">
+          <div id="test">
+            <input class="search2" type="search" name="search" size="30" maxlength="255">
+            <div class="mic-icon"></div>
+            <div class="scanner-icon"></div>
+          </div>
+        </div>
+        <div id="profileIconContainer"></div>
+      </div>
+      <div class="search-button-container">
+        <input type="submit" value="Search">
+      </div>
+      <div class="search-button-container">
+        <input id="saveButton" type="button" value="Save">
+      </div>
+      <div class="search-button-container">
+        <input id="removeButton" type="button" value="Remove">
+      </div>
+      <div class="search-button-container">
+        <input id="resetButton" type="button" value="Reset">
+      </div>
+      <input type="hidden" id="resultsInput" name="results" value="">
+      <input type="hidden" name="query" id="queryInput">
+      <input type="hidden" name="results" id="resultsInput">
+    </form>
+    
+    <div id="searchResults"></div>
 
-  <script>
-    /* To fetch from Text file */
-    /*function searchFromFile(query) {
-      fetch("/static/Search.txt")
-        .then(function(response) {
-          return response.text();
+    <script>
+      function handleMicClick() {
+        // Prompt the user to speak
+        var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+        recognition.lang = "en-US";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.start();
+
+        recognition.onresult = function(event) {
+          var query = event.results[0][0].transcript;
+          document.getElementById("test").getElementsByTagName("input")[0].value = query;
+          document.getElementById("searchform").submit(); // Submit the search form
+        };
+      }
+
+      function handleScannerClick() {
+        var input = document.createElement("input");
+        input.type = "file";
+        input.accept = "image/*";
+        input.style.display = "none";
+
+        // Trigger click event on the file input element
+        input.click();
+
+        // Handle file selection
+        input.onchange = function(event) {
+          var file = event.target.files[0];
+
+          // Handle the uploaded file here (e.g., send it to the server)
+          console.log("Uploaded file:", file);
+        };
+      }
+
+      document.getElementById("searchform").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        var query = document.getElementsByName("search")[0].value;
+
+        // Send the search query to the server
+        fetch("/search", {
+          method: "POST",
+          body: new URLSearchParams({
+            "search": query
+          })
         })
-        .then(function(data) {
-          var results = processData(data, query);
-          displayResults(results);
-        })
-        .catch(function(error) {
-          console.log("Error fetching data:", error);
-        });
-    }
-  
-    function processData(data, query) {
-      var lines = data.split("\n");
-      var results = [];
-  
-      for (var i = 0; i < lines.length; i++) {
-        var line = lines[i].trim();
-        var parts = line.split(" ? ");
-  
-        var prompt = parts[0];
-        var response = parts[1];
-  
-        var words = prompt.toLowerCase().split(" "); // Convert prompt to lowercase and split into words
-  
-        // Check if the full prompt or any individual word matches the query
-        if (prompt.toLowerCase().includes(query.toLowerCase()) || words.some(word => word.includes(query.toLowerCase()))) {
-          results.push(response);
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function(results) {
+            displayResults(results);
+          })
+          .catch(function(error) {
+            console.error(error);
+          });
+      });
+
+      function moveSearchBarUp() {
+        var searchBar = document.getElementById("test");
+        searchBar.classList.add("move-up");
+      }
+
+      function displayResults(results) {
+        var resultsContainer = document.getElementById("searchResults");
+        resultsContainer.innerHTML = ""; // Clear existing results
+
+        var resultsArray = results.split(",");
+        for (var i = 0; i < resultsArray.length; i++) {
+          var result = resultsArray[i].trim();
+          var resultElement = document.createElement("div");
+          resultElement.innerText = result; // Use innerText instead of textContent
+          resultsContainer.appendChild(resultElement);
         }
       }
-  
-      return results;
-    }*/
-  
-    /* To display results */
-   function handleMicClick() {
-  // Prompt the user to speak
-  var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-  recognition.lang = "en-US";
-  recognition.interimResults = false;
-  recognition.maxAlternatives = 1;
 
-  recognition.start();
-
-  recognition.onresult = function(event) {
-    var query = event.results[0][0].transcript;
-    document.getElementById("test").getElementsByTagName("input")[0].value = query;
-    document.getElementById("searchform").submit(); // Submit the search form
-  };
-}
-
-function handleScannerClick() {
-  var input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/*";
-  input.style.display = "none";
-
-  // Trigger click event on the file input element
-  input.click();
-
-  // Handle file selection
-  input.onchange = function (event) {
-    var file = event.target.files[0];
-
-    // Handle the uploaded file here (e.g., send it to the server)
-    console.log("Uploaded file:", file);
-  };
-}
-
-document.getElementById("searchform").addEventListener("submit", function(event) {
-  event.preventDefault();
-
-  var query = document.getElementsByName("search")[0].value;
-
-  // Send the search query to the server
-  fetch("/search", {
-    method: "POST",
-    body: new URLSearchParams({
-      "search": query
-    })
-  })
-    .then(function(response) {
-      return response.text();
-    })
-    .then(function(results) {
-      displayResults(results);
-    })
-    .catch(function(error) {
-      console.error(error);
-    });
-});
-
-function displayResults(results) {
-  var resultsContainer = document.getElementById("searchResults");
-  resultsContainer.innerHTML = "";  // Clear existing results
-
-  var resultsArray = results.split(",");
-  for (var i = 0; i < resultsArray.length; i++) {
-    var result = resultsArray[i].trim();
-    var resultElement = document.createElement("div");
-    resultElement.innerText = result;  // Use innerText instead of textContent
-    resultsContainer.appendChild(resultElement);
-  }
-}
-
-document.querySelector(".mic-icon").addEventListener("click", function() {
-  handleMicClick();
-});
-
-document.querySelector(".scanner-icon").addEventListener("click", function() {
-  handleScannerClick();
-});
-
-document.getElementById("saveButton").addEventListener("click", function() {
-  save();
-});
-
-document.getElementById("loginButton").addEventListener("click", function() {
-  login();
-});
-
-document.getElementById("removeButton").addEventListener("click", function() {
-  remove();
-});
-
-  // Define an array of tags
-    var tags = ["Fruits", "Coding", "BMW", "Python"];
-
-    // Function to generate and populate tags
-    function populateTags() {
-      var tagsContainer = document.getElementById("tags");
-      tagsContainer.innerHTML = ""; // Clear existing tags
-
-      // Iterate through the tags array and create tags dynamically
-      for (var i = 0; i < tags.length; i++) {
-        var tag = document.createElement("span");
-        tag.className = "tag";
-        tag.textContent = tags[i];
-        tag.addEventListener("click", function() {
-          var query = this.textContent;
-          document.getElementById("test").getElementsByTagName("input")[0].value = query;
-        });
-        tagsContainer.appendChild(tag);
-      }
-    }
-
-    // Wait for the HTML to finish loading before calling populateTags()
-    document.addEventListener('DOMContentLoaded', function() {
-      populateTags();
-    });
-    
-    function save() {
-      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
-      var results = document.getElementById("searchResults").innerHTML;
-    
-      document.getElementById("queryInput").value = query;
-      document.getElementById("resultsInput").value = results;
-    
-      document.getElementById("searchform").submit();
-    }
-
-    
-   function login() {
-    var name = prompt("Enter your name:");
-    var username = prompt("Enter your username:");
-  
-    if (name && username) {
-      // Perform login logic here using the name and username
-      alert("Welcome, " + name + "! You are logged in as " + username);
-  
-      // Generate profile icon based on the user's initial
-      var initial = name.charAt(0).toUpperCase();
-      var profileIconContainer = document.getElementById("profileIconContainer");
-      profileIconContainer.innerHTML = '<div class="profile-icon">' + initial + '</div>';
-    } else {
-      alert("Invalid input. Please enter both name and username.");
-    }
-  }
-
-  function remove() {
-    var query = document.getElementById("test").getElementsByTagName("input")[0].value;
-  
-    document.getElementById("queryInput").value = query;
-  
-    fetch("/remove", {
-      method: "POST",
-      body: new URLSearchParams({
-        "query": query
-      })
-    })
-      .then(function(response) {
-        return response.text();
-      })
-      .then(function() {
-        // Handle success if needed
-      })
-      .catch(function(error) {
-        console.error(error);
+      document.querySelector(".mic-icon").addEventListener("click", function() {
+        handleMicClick();
       });
-  }
 
-  </script>
-</body>
+      document.querySelector(".scanner-icon").addEventListener("click", function() {
+        handleScannerClick();
+      });
+
+      document.getElementById("saveButton").addEventListener("click", function() {
+        save();
+      });
+
+      document.getElementById("loginButton").addEventListener("click", function() {
+        login();
+      });
+
+      document.getElementById("removeButton").addEventListener("click", function() {
+        remove();
+      });
+
+      function save() {
+        var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+        var results = document.getElementById("searchResults").innerHTML;
+
+        document.getElementById("queryInput").value = query;
+        document.getElementById("resultsInput").value = results;
+
+        document.getElementById("searchform").submit();
+      }
+
+      function remove() {
+        var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+
+        document.getElementById("queryInput").value = query;
+
+        fetch("/remove", {
+          method: "POST",
+          body: new URLSearchParams({
+            "query": query
+          })
+        })
+          .then(function(response) {
+            return response.text();
+          })
+          .then(function() {
+            // Handle success if needed
+          })
+          .catch(function(error) {
+            console.error(error);
+          });
+      }
+    </script>
+  </body>
 </html>

@@ -26,11 +26,9 @@ def save_search():
   file_path = "static/Search.txt"
   updated = False
 
-  with open(file_path, 'r') as search_file:
-    lines = search_file.readlines()
-
-  with open(file_path, 'w') as search_file:
-    for line in lines:
+  lines = []
+  with open(file_path, 'r+') as search_file:
+    for line in search_file:
       parts = line.split(" ? ")
       existing_query = parts[0].strip()
       if query.lower() in existing_query.lower():
@@ -38,10 +36,17 @@ def save_search():
         updated_query = existing_query + query.strip()
         line = updated_query + ' ? ' + parts[1].strip() + '\n'
         updated = True
-      search_file.write(line)
+        break  # Stop processing further lines since the query is updated
+      lines.append(line.rstrip('\n'))
 
     if not updated:
-      search_file.write(query + ' ? ' + results.strip() + '\n')
+      lines.append(query + ' ? ' + results.strip())
+
+    search_file.seek(0)  # Move the file pointer to the beginning
+    search_file.truncate()  # Clear the file content
+
+    for line in lines:
+      search_file.write(line + '\n')
 
   return redirect(url_for('hello_world', success=True))
 

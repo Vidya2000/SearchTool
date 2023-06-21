@@ -1,28 +1,19 @@
 
-Query: what is your favorite colour new
+Query: what is your favorite colour jio
 Results: BlackPurple
 
-Query: what is your favorite colour new
+Query: what is your favorite colour jio
 Results: BlackPurple
 
-Query: what is your favorite colour new
+Query: what is your favorite colour jio
 Results: BlackPurple
 
-Query: what is your favorite colour new
+Query: what is your favorite colour jio
 Results: BlackPurple
 
-Query: what is your favorite colour new
+Query: what is your favorite colour jio
 Results: BlackPurple
 
-Query: what is your favorite colour new
-Results: BlackPurple
-
-Query: what is your favorite colour new
-Results: BlackPurple
-
-Query: what is your favorite colour new
-Results: BlackPurple
-
-Query: what is your favorite colour new
-Results: 
+Query: What is your favorite coding language bhn
+Results: Python
 
