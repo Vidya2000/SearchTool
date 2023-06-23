@@ -1,19 +1,5 @@
 
-Query: what is your favorite colour jio
-Results: BlackPurple
 
-Query: what is your favorite colour jio
-Results: BlackPurple
-
-Query: what is your favorite colour jio
-Results: BlackPurple
-
-Query: what is your favorite colour jio
-Results: BlackPurple
-
-Query: what is your favorite colour jio
-Results: BlackPurple
-
-Query: What is your favorite coding language bhn
-Results: Python
+Query: what
+Results: BlackPurple      CatDog
 

@@ -13,17 +13,18 @@
 
     #headerContainer {
       text-align: center;
-      margin-bottom: 20px; /* Add margin-bottom to create space below the welcome message */
+      margin-bottom: 20px;
     }
-    
+
     #test {
       position: relative;
-      width: 500px;
+      width: 100%;
+      max-width: 500px;
       height: 50px;
       font-size: 20px;
       padding: 10px 60px 10px 10px;
       border-radius: 25px;
-      border: 2px solid #333; /* Set the border color to dark */
+      border: 2px solid #333;
     }
 
     #test input[type="search"] {
@@ -65,12 +66,12 @@
     #test::-webkit-search-decoration,
     #test::-webkit-search-results-button,
     #test::-webkit-search-results-decoration {
-      display: none; 
+      display: none;
     }
 
     .search-bar-container {
-      position: relative; 
-      display: inline-block; 
+      position: relative;
+      display: inline-block;
     }
 
     input[type="submit"] {
@@ -84,13 +85,14 @@
     }
 
     .search-bar-buttons-container {
-      display: inline-block;
+      display: flex;
+      flex-wrap: wrap;
     }
 
     .search-button-container {
-      display: inline-block;
+      display: flex;
       margin-left: 5px;
-      vertical-align: top;
+      align-items: center;
     }
 
     #saveButton {
@@ -127,25 +129,101 @@
       display: inline-block;
       margin: 0;
       font-size: 24px;
+      margin-top: 20px; /* Add top margin to create space for search results */
     }
 
     #test.move-up {
-      transform: translateY(-100%);
+      transform: translateY(0%); /* Set the translation to 0% to prevent the search bar from moving up */
     }
+
+    /* Media queries for mobile screens */
+    @media (max-width: 767px) {
+      #test {
+        width: 100%;
+        max-width: none;
+        position: relative;
+        z-index: 1;
+        margin-bottom: 10px;
+      }
+
+      .search-bar-buttons-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+      }
+
+      .search-button-container {
+        margin-top: 5px;
+        margin-right: 5px;
+      }
+
+      input[type="submit"],
+      input[type="button"] {
+        width: auto;
+      }
+
+      #headerContainer {
+        margin-bottom: 40px; /* Increase the margin to create more space */
+        position: relative;
+        z-index: 2;
+      }
+    }
+
+    @media screen and (max-width: 767px) {
+      body {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        height: 100vh;
+        overflow-y: auto;
+      }
+    
+      #headerContainer {
+        margin-top: 20px;
+      }
+    
+      #test {
+        position: fixed;
+        top: 150px;
+        left: 0;
+        width: 100%;
+        max-width: 500px;
+        margin-bottom: 20px;
+        transform: none !important;
+      }
+    
+      #searchResults {
+        margin-top: 20px;
+      }
+    
+      .search-bar-buttons-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: flex-start;
+        align-items: center;
+        margin-top: 10px;
+        flex-direction: row;
+      }
+    
+      .search-button-container {
+        margin-top: 5px;
+        margin-right: 5px;
+      }
+    }
+
   </style>
 </head>
 <body>
-    <form id="searchform" class="search2" method="post" action="/save_search">
-      <div class="search-bar-buttons-container">
-        <div class="search-bar-container">
-          <div id="test">
-            <input class="search2" type="search" name="search" size="30" maxlength="255">
-            <div class="mic-icon"></div>
-            <div class="scanner-icon"></div>
-          </div>
+  <form id="searchform" class="search2" method="post" action="/save_search">
+    <div class="search-bar-buttons-container">
+      <div class="search-bar-container">
+        <div id="test">
+          <input class="search2" type="search" name="search" size="30" maxlength="255">
+          <div class="mic-icon"></div>
+          <div class="scanner-icon"></div>
         </div>
-        <div id="profileIconContainer"></div>
       </div>
+      <div id="profileIconContainer"></div>
       <div class="search-button-container">
         <input type="submit" value="Search">
       </div>
@@ -158,140 +236,136 @@
       <div class="search-button-container">
         <input id="resetButton" type="button" value="Reset">
       </div>
-      <input type="hidden" id="resultsInput" name="results" value="">
-      <input type="hidden" name="query" id="queryInput">
-      <input type="hidden" name="results" id="resultsInput">
-    </form>
-    
-    <div id="searchResults"></div>
+    </div>
+    <input type="hidden" id="resultsInput" name="results" value="">
+    <input type="hidden" name="query" id="queryInput">
+    <input type="hidden" name="results" id="resultsInput">
+  </form>
 
-    <script>
-      function handleMicClick() {
-        // Prompt the user to speak
-        var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
-        recognition.lang = "en-US";
-        recognition.interimResults = false;
-        recognition.maxAlternatives = 1;
+  <div id="searchResults"></div>
 
-        recognition.start();
+  <script>
+    function handleMicClick() {
+      // Prompt the user to speak
+      var recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition || window.mozSpeechRecognition || window.msSpeechRecognition)();
+      recognition.lang = "en-US";
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
 
-        recognition.onresult = function(event) {
-          var query = event.results[0][0].transcript;
-          document.getElementById("test").getElementsByTagName("input")[0].value = query;
-          document.getElementById("searchform").submit(); // Submit the search form
-        };
-      }
+      recognition.start();
 
-      function handleScannerClick() {
-        var input = document.createElement("input");
-        input.type = "file";
-        input.accept = "image/*";
-        input.style.display = "none";
+      recognition.onresult = function(event) {
+        var query = event.results[0][0].transcript;
+        document.getElementById("test").getElementsByTagName("input")[0].value = query;
+        document.getElementById("searchform").submit(); // Submit the search form
+      };
+    }
 
-        // Trigger click event on the file input element
-        input.click();
+    function handleScannerClick() {
+      var input = document.createElement("input");
+      input.type = "file";
+      input.accept = "image/*";
+      input.style.display = "none";
 
-        // Handle file selection
-        input.onchange = function(event) {
-          var file = event.target.files[0];
+      // Trigger click event on the file input element
+      input.click();
 
-          // Handle the uploaded file here (e.g., send it to the server)
-          console.log("Uploaded file:", file);
-        };
-      }
+      // Handle file selection
+      input.onchange = function(event) {
+        var file = event.target.files[0];
 
-      document.getElementById("searchform").addEventListener("submit", function(event) {
-        event.preventDefault();
+        // Handle the uploaded file here (e.g., send it to the server)
+        console.log("Uploaded file:", file);
+      };
+    }
 
-        var query = document.getElementsByName("search")[0].value;
+    document.getElementById("searchform").addEventListener("submit", function(event) {
+      event.preventDefault();
 
-        // Send the search query to the server
-        fetch("/search", {
-          method: "POST",
-          body: new URLSearchParams({
-            "search": query
-          })
+      var query = document.getElementsByName("search")[0].value;
+
+      // Send the search query to the server
+      fetch("/search", {
+        method: "POST",
+        body: new URLSearchParams({
+          "search": query
         })
-          .then(function(response) {
-            return response.text();
-          })
-          .then(function(results) {
-            displayResults(results);
-          })
-          .catch(function(error) {
-            console.error(error);
-          });
-      });
-
-      function moveSearchBarUp() {
-        var searchBar = document.getElementById("test");
-        searchBar.classList.add("move-up");
-      }
-
-      function displayResults(results) {
-        var resultsContainer = document.getElementById("searchResults");
-        resultsContainer.innerHTML = ""; // Clear existing results
-
-        var resultsArray = results.split(",");
-        for (var i = 0; i < resultsArray.length; i++) {
-          var result = resultsArray[i].trim();
-          var resultElement = document.createElement("div");
-          resultElement.innerText = result; // Use innerText instead of textContent
-          resultsContainer.appendChild(resultElement);
-        }
-      }
-
-      document.querySelector(".mic-icon").addEventListener("click", function() {
-        handleMicClick();
-      });
-
-      document.querySelector(".scanner-icon").addEventListener("click", function() {
-        handleScannerClick();
-      });
-
-      document.getElementById("saveButton").addEventListener("click", function() {
-        save();
-      });
-
-      document.getElementById("loginButton").addEventListener("click", function() {
-        login();
-      });
-
-      document.getElementById("removeButton").addEventListener("click", function() {
-        remove();
-      });
-
-      function save() {
-        var query = document.getElementById("test").getElementsByTagName("input")[0].value;
-        var results = document.getElementById("searchResults").innerHTML;
-
-        document.getElementById("queryInput").value = query;
-        document.getElementById("resultsInput").value = results;
-
-        document.getElementById("searchform").submit();
-      }
-
-      function remove() {
-        var query = document.getElementById("test").getElementsByTagName("input")[0].value;
-
-        document.getElementById("queryInput").value = query;
-
-        fetch("/remove", {
-          method: "POST",
-          body: new URLSearchParams({
-            "query": query
-          })
+      })
+        .then(function(response) {
+          return response.text();
         })
-          .then(function(response) {
-            return response.text();
-          })
-          .then(function() {
-            // Handle success if needed
-          })
-          .catch(function(error) {
-            console.error(error);
-          });
+        .then(function(results) {
+          displayResults(results);
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+    });
+
+    function displayResults(results) {
+      var resultsContainer = document.getElementById("searchResults");
+      resultsContainer.innerHTML = ""; // Clear existing results
+
+      var resultsArray = results.split(",");
+      for (var i = 0; i < resultsArray.length; i++) {
+        var result = resultsArray[i].trim();
+        var resultElement = document.createElement("div");
+        resultElement.innerText = result; // Use innerText instead of textContent
+        resultsContainer.appendChild(resultElement);
       }
-    </script>
-  </body>
+    }
+
+    document.querySelector(".mic-icon").addEventListener("click", function() {
+      handleMicClick();
+    });
+
+    document.querySelector(".scanner-icon").addEventListener("click", function() {
+      handleScannerClick();
+    });
+
+    document.getElementById("saveButton").addEventListener("click", function() {
+      save();
+    });
+
+    document.getElementById("loginButton").addEventListener("click", function() {
+      login();
+    });
+
+    document.getElementById("removeButton").addEventListener("click", function() {
+      remove();
+    });
+
+    function save() {
+      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+      var results = document.getElementById("searchResults").innerHTML;
+
+      document.getElementById("queryInput").value = query;
+      document.getElementById("resultsInput").value = results;
+
+      document.getElementById("searchform").submit();
+    }
+
+    function remove() {
+      var query = document.getElementById("test").getElementsByTagName("input")[0].value;
+
+      document.getElementById("queryInput").value = query;
+
+      fetch("/remove", {
+        method: "POST",
+        body: new URLSearchParams({
+          "query": query
+        })
+      })
+        .then(function(response) {
+          return response.text();
+        })
+        .then(function() {
+          // Handle success if needed
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+    }
+  </script>
+</body>
 </html>
