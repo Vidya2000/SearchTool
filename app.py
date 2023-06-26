@@ -36,8 +36,8 @@ def save_search():
         updated_query = existing_query + query.strip()
         line = updated_query + ' ? ' + parts[1].strip() + '\n'
         updated = True
-        break  # Stop processing further lines since the query is updated
-      lines.append(line.rstrip('\n'))
+      else:
+        lines.append(line.rstrip('\n'))
 
     if not updated:
       lines.append(query + ' ? ' + results.strip())

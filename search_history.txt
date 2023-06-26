@@ -3,3 +3,9 @@
 Query: what
 Results: BlackPurple      CatDog
 
+Query: color
+Results: 
+
+Query: what
+Results: 
+

@@ -1,7 +1,7 @@
-what is your favorite color ? Black, Purple
-What is your favorite fruit ? Apple, Kiwi
-Fruit ? Mango
-Favorite Car ? BMW
-favorite coding language ? Python
-Where is your location ? Bangalore
+favorite car ?
+What is your favorite color ? black
 what is your favorite animal ? Dog
+Where is your location ? Bangalore
+Fruits ? Mango, Kiwi
+fav coding language ? Python
+
