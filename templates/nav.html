@@ -19,47 +19,54 @@
     #test {
       position: relative;
       width: 100%;
-      max-width: 500px;
-      height: 50px;
+      max-width: 700px; /* Increased width */
+      height: 60px;
       font-size: 20px;
-      padding: 10px 60px 10px 10px;
+      padding: 10px;
       border-radius: 25px;
       border: 2px solid #333;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
     }
 
     #test input[type="search"] {
-      width: 100%;
+      flex: 1;
       height: 100%;
       padding: 0;
       border: none;
       outline: none;
       background: transparent;
+      margin-right: 10px; /* Added margin */
     }
 
     #test .mic-icon,
-    #test .scanner-icon {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
+    #test .scanner-icon,
+    #test .drive-icon {
+      margin-left: 10px;
       cursor: pointer;
+      width: 24px;
+      height: 24px;
+      background-repeat: no-repeat;
+      background-size: 100% 100%;
+      position: absolute; /* Added */
+      top: 50%; /* Added */
+      transform: translateY(-50%); /* Added */
     }
 
     #test .mic-icon {
-      right: 38px;
       background-image: url('/static/mic.png');
-      width: 24px;
-      height: 24px;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
+      right: 70px; /* Adjusted position */
     }
 
     #test .scanner-icon {
-      right: 10px;
       background-image: url('/static/scannerr.png');
-      width: 24px;
-      height: 24px;
-      background-repeat: no-repeat;
-      background-size: 100% 100%;
+      right: 42px; /* Adjusted position */
+    }
+
+    #test .drive-icon {
+      background-image: url('/static/drive.png');
+      right: 5px; /* Adjusted position */
     }
 
     #test::-webkit-search-cancel-button,
@@ -87,12 +94,14 @@
     .search-bar-buttons-container {
       display: flex;
       flex-wrap: wrap;
+      align-items: center; /* Added */
     }
 
     .search-button-container {
       display: flex;
       margin-left: 5px;
       align-items: center;
+      margin-top: 5px; /* Added */
     }
 
     #saveButton {
@@ -136,6 +145,22 @@
       transform: translateY(0%); /* Set the translation to 0% to prevent the search bar from moving up */
     }
 
+    #driveIconcontainer {
+      position: absolute;
+      top: 50%;
+      right: 10px;
+      transform: translateY(-50%);
+    }
+
+    #messageContainer {
+      display: none;
+      background-color: #f2f2f2;
+      padding: 10px;
+      margin-top: 10px;
+      text-align: center;
+      font-size: 18px;
+    }
+    
     /* Media queries for mobile screens */
     @media (max-width: 767px) {
       #test {
@@ -177,11 +202,11 @@
         height: 100vh;
         overflow-y: auto;
       }
-    
+
       #headerContainer {
         margin-top: 20px;
       }
-    
+
       #test {
         position: fixed;
         top: 150px;
@@ -191,11 +216,11 @@
         margin-bottom: 20px;
         transform: none !important;
       }
-    
+
       #searchResults {
         margin-top: 20px;
       }
-    
+
       .search-bar-buttons-container {
         display: flex;
         flex-wrap: wrap;
@@ -204,15 +229,15 @@
         margin-top: 10px;
         flex-direction: row;
       }
-    
+
       .search-button-container {
         margin-top: 5px;
         margin-right: 5px;
       }
     }
-
   </style>
 </head>
+
 <body>
   <form id="searchform" class="search2" method="post" action="/save_search">
     <div class="search-bar-buttons-container">
@@ -221,6 +246,9 @@
           <input class="search2" type="search" name="search" size="30" maxlength="255">
           <div class="mic-icon"></div>
           <div class="scanner-icon"></div>
+          <div id="driveIconcontainer">
+            <div class="drive-icon"></div>
+          </div>
         </div>
       </div>
       <div id="profileIconContainer"></div>
@@ -241,6 +269,7 @@
     <input type="hidden" name="query" id="queryInput">
     <input type="hidden" name="results" id="resultsInput">
     <div id="successMessage" style="display: none;">Search results successfully removed!</div>
+    <div id="messageContainer"></div>
     <a href="/static/SearchTool.xlsm" download>Download Excel</a>
   </form>
 
@@ -263,6 +292,23 @@
       };
     }
 
+    // Function to handle drive icon click
+function handleDriveIconClick() {
+  var messageContainer = document.getElementById("messageContainer");
+  var messageText = "Upload from drive";
+
+  // Check if the message container is already visible with the same message
+  if (messageContainer.innerText === messageText && messageContainer.style.display === "block") {
+    // Hide the message container
+    messageContainer.style.display = "none";
+  } else {
+    // Set the message text and display it in the message container
+    messageContainer.innerText = messageText;
+    messageContainer.style.display = "block";
+  }
+}
+
+
     function handleScannerClick() {
       var input = document.createElement("input");
       input.type = "file";
@@ -280,9 +326,8 @@
         console.log("Uploaded file:", file);
       };
     }
-
-    document.getElementById("searchform").addEventListener("submit", function(event) {
-      event.preventDefault();
+document.getElementById("searchform").addEventListener("submit", function(event) {
+        event.preventDefault();
 
       var query = document.getElementsByName("search")[0].value;
 
@@ -325,6 +370,8 @@
       handleScannerClick();
     });
 
+    document.querySelector(".drive-icon").addEventListener("click", handleDriveIconClick);
+
     document.getElementById("saveButton").addEventListener("click", function() {
       save();
     });
@@ -347,6 +394,7 @@
       document.getElementById("searchform").submit();
     }
 
+    
     function removeSearch() {
       var query = document.getElementById("test").getElementsByTagName("input")[0].value;
     
@@ -361,14 +409,11 @@
         .then(function(response) {
           return response.text();
         })
-        .then(function() {
-          // Show success message
+        .then(function(message) {
           var successMessage = document.getElementById("successMessage");
           successMessage.style.display = "block";
-          successMessage.innerText = "Search results successfully removed!";
-              
-          // Reload the page or redirect to the homepage
-          window.location.href = "/";
+          successMessage.innerText = message;
+          document.getElementById("searchResults").innerHTML = "";
         })
         .catch(function(error) {
           console.error(error);

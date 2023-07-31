@@ -1,11 +1,8 @@
 
 
-Query: what
-Results: BlackPurple      CatDog
+Query: fruit
+Results: Mango
 
-Query: color
-Results: 
-
-Query: what
-Results: 
+Query: language
+Results: Python
 
